@@ -28,20 +28,13 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Supabase
 
-1. Create a Supabase project (e.g. `afterclass-waitlist`)
-2. Run [`supabase/migrations/001_waitlist_signups.sql`](supabase/migrations/001_waitlist_signups.sql) in the SQL Editor
-3. Set env vars:
+Use your **waitlist-only** Supabase account. Full steps: [`docs/SUPABASE_SETUP.md`](docs/SUPABASE_SETUP.md).
 
-```
-NEXT_PUBLIC_SUPABASE_URL=
-SUPABASE_SERVICE_ROLE_KEY=
-```
+Migration file: [`supabase/migrations/001_waitlist_signups.sql`](supabase/migrations/001_waitlist_signups.sql)
 
 ## Deploy (Vercel)
 
-1. Import this repo in Vercel
-2. Set env vars from `.env.example`
-3. Add domain `join.afterclassapp.com` and configure DNS (CNAME to Vercel)
+Full steps: [`docs/DEPLOY.md`](docs/DEPLOY.md) — import repo, set env vars, attach `join.afterclassapp.com`.
 
 ## Marketing site
 
