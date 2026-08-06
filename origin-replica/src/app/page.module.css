@@ -1,0 +1,13 @@
+.main {
+  position: relative;
+  z-index: 0;
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+  color: #EDECEC;
+}
+
+.main ::selection {
+  background: #14120b;
+  color: #EDECEC;
+}

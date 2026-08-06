@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Origin overlay compare</title>
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #111;
+        color: #eee;
+      }
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: center;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #333;
+      }
+      label {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        font-size: 14px;
+      }
+      select,
+      input[type="text"] {
+        background: #222;
+        color: #eee;
+        border: 1px solid #444;
+        border-radius: 4px;
+        padding: 0.35rem 0.5rem;
+      }
+      .stage {
+        position: relative;
+        width: 1440px;
+        height: 900px;
+        margin: 1rem auto;
+        background: #14120b;
+        overflow: hidden;
+        box-shadow: 0 0 0 1px #333;
+      }
+      .stage iframe,
+      .stage img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+      .stage img {
+        pointer-events: none;
+        mix-blend-mode: normal;
+      }
+      .hint {
+        max-width: 1440px;
+        margin: 0 auto 2rem;
+        padding: 0 1rem;
+        font-size: 13px;
+        color: #999;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Origin overlay compare</strong>
+      <label>
+        Reference frame
+        <select id="frame">
+          <option value="../reference/frames/settled.png">settled</option>
+          <option value="../reference/frames/0000ms.png">0000ms</option>
+          <option value="../reference/frames/0500ms.png">0500ms</option>
+          <option value="../reference/frames/0800ms.png">0800ms</option>
+          <option value="../reference/frames/1200ms.png">1200ms</option>
+          <option value="../reference/frames/2000ms.png">2000ms</option>
+          <option value="../reference/frames/3000ms.png">3000ms</option>
+          <option value="../reference/frames/5000ms.png">5000ms</option>
+          <option value="../reference/frames/cold-0000ms.png">cold-0000ms</option>
+          <option value="../reference/frames/cold-0800ms.png">cold-0800ms</option>
+          <option value="../reference/frames/cold-2000ms.png">cold-2000ms</option>
+          <option value="../reference/frames/cold-3500ms.png">cold-3500ms</option>
+        </select>
+      </label>
+      <label>
+        Local URL
+        <input id="local" type="text" value="http://localhost:3456" size="28" />
+      </label>
+      <label>
+        Overlay opacity
+        <input id="opacity" type="range" min="0" max="100" value="45" />
+        <span id="opacityVal">45%</span>
+      </label>
+      <label>
+        <input id="diff" type="checkbox" />
+        Difference blend
+      </label>
+    </header>
+    <div class="stage">
+      <iframe id="iframe" src="http://localhost:3456" title="local replica"></iframe>
+      <img id="ref" alt="reference frame" src="../reference/frames/settled.png" />
+    </div>
+    <p class="hint">
+      Run <code>npm run dev</code>, then open this file. Slide opacity to compare the local
+      render against a captured Origin frame at 1440×900. Use difference blend to spot
+      geometry drift in the Lissajous lines and crosshair.
+    </p>
+    <script>
+      const frame = document.getElementById("frame");
+      const local = document.getElementById("local");
+      const opacity = document.getElementById("opacity");
+      const opacityVal = document.getElementById("opacityVal");
+      const diff = document.getElementById("diff");
+      const iframe = document.getElementById("iframe");
+      const ref = document.getElementById("ref");
+
+      function sync() {
+        ref.src = frame.value;
+        iframe.src = local.value;
+        ref.style.opacity = String(Number(opacity.value) / 100);
+        opacityVal.textContent = `${opacity.value}%`;
+        ref.style.mixBlendMode = diff.checked ? "difference" : "normal";
+      }
+
+      frame.addEventListener("change", sync);
+      local.addEventListener("change", sync);
+      opacity.addEventListener("input", sync);
+      diff.addEventListener("change", sync);
+      sync();
+    </script>
+  </body>
+</html>

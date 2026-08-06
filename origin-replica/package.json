@@ -1,0 +1,27 @@
+{
+  "name": "origin-replica",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3456",
+    "build": "next build",
+    "start": "next start --port 3456",
+    "capture": "tsx scripts/capture-reference.ts",
+    "capture:install": "npx playwright install chromium",
+    "verify": "tsx scripts/verify-local.ts",
+    "debug:local": "tsx scripts/debug-local.ts"
+  },
+  "dependencies": {
+    "next": "^15.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.17.2",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "playwright": "^1.55.0",
+    "tsx": "^4.20.4",
+    "typescript": "^5.9.2"
+  }
+}

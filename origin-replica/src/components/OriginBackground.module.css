@@ -1,0 +1,73 @@
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.solid {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: #14120b;
+}
+
+.shaderWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  transform-origin: top right;
+  transform: scale(1);
+  opacity: 0;
+  transition: opacity 700ms ease-out;
+}
+
+.shaderVisible {
+  opacity: 1;
+}
+
+@media (max-width: 1023px) {
+  .shaderWrap {
+    transform-origin: bottom right;
+    transform: scale(1.25);
+  }
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgb(0 0 0 / 0.2);
+}
+
+@media (min-width: 1024px) {
+  .dim {
+    background: rgb(0 0 0 / 0.25);
+  }
+}
+
+.loops {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.fallbackImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
