@@ -1,26 +1,33 @@
 import { NextResponse } from "next/server";
+import { parseEmail } from "@/lib/email";
 import { notifyWaitlistSignup } from "@/lib/notify-waitlist";
 import { getSupabase } from "@/lib/supabase";
-
-type WaitlistBody = {
-  email?: unknown;
-  website?: unknown;
-};
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-function normalizeEmail(value: unknown): string | null {
-  if (typeof value !== "string") return null;
-  const email = value.trim().toLowerCase();
-  if (!email || email.length > 254 || !EMAIL_RE.test(email)) return null;
-  return email;
-}
+import {
+  allowWaitlistAttempt,
+  clientIp,
+  isBodyTooLarge,
+  parseWaitlistBody,
+} from "@/lib/waitlist-request";
 
 export async function POST(request: Request) {
-  let body: WaitlistBody;
+  if (isBodyTooLarge(request)) {
+    return NextResponse.json({ error: "Request too large" }, { status: 413 });
+  }
+
+  const ip = clientIp(request);
+  if (!allowWaitlistAttempt(ip)) {
+    return NextResponse.json({ error: "Too many attempts. Try again soon." }, { status: 429 });
+  }
+
+  let raw: unknown;
   try {
-    body = (await request.json()) as WaitlistBody;
+    raw = await request.json();
   } catch {
+    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  }
+
+  const body = parseWaitlistBody(raw);
+  if (!body) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
@@ -29,7 +36,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  const email = normalizeEmail(body.email);
+  const email = parseEmail(body.email);
   if (!email) {
     return NextResponse.json({ error: "Enter a valid email" }, { status: 400 });
   }

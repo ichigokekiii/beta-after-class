@@ -6,6 +6,10 @@ import "maplibre-gl/dist/maplibre-gl.css";
 export const metadata: Metadata = {
   title: "After Class",
   description: "The first move is showing up.",
+  icons: {
+    icon: [{ url: "/after-class-dark-logo.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/after-class-dark-logo.svg" }],
+  },
 };
 
 export default function RootLayout({
