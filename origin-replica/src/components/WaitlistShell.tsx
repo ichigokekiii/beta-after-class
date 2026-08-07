@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { WAITLIST_SUCCESS_EVENT } from "@/lib/animation-timeline";
+import { keepFieldInView } from "@/lib/use-mobile-keyboard";
 import styles from "./WaitlistShell.module.css";
 
 type FormStatus = "idle" | "submitting" | "submitted" | "error";
@@ -85,9 +86,14 @@ export function WaitlistShell() {
             type="email"
             autoComplete="email"
             inputMode="email"
+            enterKeyHint="send"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             placeholder="Enter your email"
             name="email"
             value={email}
+            onFocus={(e) => keepFieldInView(e.currentTarget)}
             onChange={(e) => {
               setEmail(e.target.value);
               if (status === "error") {

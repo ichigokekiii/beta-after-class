@@ -190,4 +190,37 @@
     letter-spacing: 0.075px;
     max-width: none;
   }
+
+  /* When the keyboard is open, free vertical space so the field stays visible */
+  .grid[data-keyboard="open"] {
+    min-height: 100%;
+    height: auto;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    align-content: start;
+  }
+
+  .grid[data-keyboard="open"] .brand {
+    margin-bottom: 0.5rem;
+  }
+
+  .grid[data-keyboard="open"] .brandLogo {
+    height: 1.5rem;
+    max-width: min(100%, 9rem);
+  }
+
+  .grid[data-keyboard="open"] .copy {
+    gap: 0.35rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .grid[data-keyboard="open"] .headline {
+    font-size: 1.75rem;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+
+  .grid[data-keyboard="open"] .subcopy {
+    display: none;
+  }
 }

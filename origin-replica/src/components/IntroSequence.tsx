@@ -3,6 +3,7 @@
 import { Crosshair } from "@/components/Crosshair";
 import { WaitlistShell } from "@/components/WaitlistShell";
 import { INTRO_GLIDE, toCssLinear } from "@/lib/easing";
+import { useMobileKeyboardOpen } from "@/lib/use-mobile-keyboard";
 import { useContentRevealed } from "@/lib/use-reveal";
 import styles from "./IntroSequence.module.css";
 
@@ -11,9 +12,13 @@ const BRAND_LOGO_SRC = "/after-class-logo.svg";
 
 export function IntroSequence() {
   const revealed = useContentRevealed();
+  const keyboardOpen = useMobileKeyboardOpen();
 
   return (
-    <div className={styles.grid}>
+    <div
+      className={styles.grid}
+      data-keyboard={keyboardOpen ? "open" : undefined}
+    >
       <div className={styles.column}>
         <span aria-hidden="true" className={styles.anchor}>
           <Crosshair />

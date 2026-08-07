@@ -58,6 +58,15 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+@media (max-width: 767px) {
+  html,
+  body {
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+  }
+}
+
 button,
 input {
   font: inherit;
