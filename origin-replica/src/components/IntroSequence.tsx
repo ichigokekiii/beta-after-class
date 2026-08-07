@@ -25,7 +25,7 @@ export function IntroSequence() {
           style={{ ["--intro-ease" as string]: INTRO_EASE }}
         >
           <div className={styles.brand}>
-            <a href="/" aria-label="After Class home" className={styles.mark}>
+            <a href="/join" aria-label="After Class home" className={styles.mark}>
               <img
                 src={BRAND_LOGO_SRC}
                 alt=""

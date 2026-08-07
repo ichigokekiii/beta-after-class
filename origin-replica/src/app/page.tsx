@@ -1,14 +1,5 @@
-"use client";
-
-import { IntroSequence } from "@/components/IntroSequence";
-import { OriginBackground } from "@/components/OriginBackground";
-import styles from "./page.module.css";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return (
-    <main id="main" className={styles.main}>
-      <OriginBackground />
-      <IntroSequence />
-    </main>
-  );
+  redirect("/join");
 }
