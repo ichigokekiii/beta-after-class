@@ -8,13 +8,21 @@ Use your **After Class waitlist** Supabase account (not the marketing-site accou
 2. **New project** → name it `afterclass-waitlist`.
 3. Pick a region close to your users and set a database password (save it somewhere safe).
 
-## 2. Run migration
+## 2. Run migrations
 
 1. Open **SQL Editor** → **New query**.
-2. Paste the contents of [`supabase/migrations/001_waitlist_signups.sql`](../supabase/migrations/001_waitlist_signups.sql).
-3. Click **Run**.
+2. Paste and run [`supabase/migrations/001_waitlist_signups.sql`](../supabase/migrations/001_waitlist_signups.sql).
+3. Paste and run [`supabase/migrations/002_waitlist_rate_limits.sql`](../supabase/migrations/002_waitlist_rate_limits.sql).
+4. Paste and run [`supabase/migrations/003_waitlist_edu_ph_email.sql`](../supabase/migrations/003_waitlist_edu_ph_email.sql).
 
-You should see a `waitlist_signups` table under **Table Editor** with columns: `id`, `email`, `created_at`.
+You should see:
+- `waitlist_signups` (`id`, `email`, `created_at`) with a `.edu.ph` check constraint
+- `waitlist_rate_limits` (`key`, `hit_count`, `window_started_at`)
+- function `consume_waitlist_rate_limit` (used by the server action; **5 tries / IP / 15 min**)
+
+Only **`.edu.ph` school emails** are accepted (e.g. `name@up.edu.ph`).
+
+If production already ran earlier migrations, run any missing ones (`002`, `003`) before deploying.
 
 ## 3. Copy API keys
 
@@ -47,8 +55,10 @@ Restart `npm run dev` after saving.
 ## 5. Smoke test
 
 1. Open [http://localhost:3000](http://localhost:3000).
-2. Submit a test email → row appears in **Table Editor → waitlist_signups**.
-3. Submit the same email again → UI shows "You're already on the list."
+2. Submit a `.edu.ph` email (e.g. `you@up.edu.ph`) → row appears in **Table Editor → waitlist_signups**.
+3. Submit a Gmail address → UI shows "Use your .edu.ph school email".
+4. Submit the same school email again → UI shows "You're already on the list."
+5. Submit 5+ different `.edu.ph` emails quickly → UI shows "Too many tries…" after the limit.
 
 ## 6. Vercel production env
 

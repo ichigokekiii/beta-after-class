@@ -3,6 +3,10 @@
 import { waitlistSchema } from '@/lib/validations/waitlist'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { siteContent } from '@/lib/content'
+import {
+  consumeWaitlistRateLimit,
+  getClientIp,
+} from '@/lib/rate-limit'
 
 export type WaitlistActionState = { ok: boolean; message: string }
 
@@ -23,6 +27,16 @@ export async function submitWaitlist(
 
   try {
     const supabase = createSupabaseServerClient()
+    const ip = await getClientIp()
+    const rate = await consumeWaitlistRateLimit(supabase, ip)
+
+    if (!rate.ok) {
+      if (rate.reason === 'limited') {
+        return { ok: false, message: siteContent.waitlist.rateLimited }
+      }
+      return { ok: false, message: 'Something went wrong. Try again.' }
+    }
+
     const { error } = await supabase.from('waitlist_signups').insert({
       email: parsed.data.email.toLowerCase().trim(),
     })
