@@ -4,15 +4,56 @@ import { FormEvent, useState } from "react";
 import { WAITLIST_SUCCESS_EVENT } from "@/lib/animation-timeline";
 import styles from "./WaitlistShell.module.css";
 
+type FormStatus = "idle" | "submitting" | "submitted" | "error";
+
 export function WaitlistShell() {
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<FormStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const onSubmit = (e: FormEvent) => {
+  const submitted = status === "submitted";
+  const busy = status === "submitting";
+
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    setSubmitted(true);
-    window.dispatchEvent(new Event(WAITLIST_SUCCESS_EVENT));
+    if (!email.trim() || busy || submitted) return;
+
+    const form = e.currentTarget;
+    const honeypot = new FormData(form).get("website");
+
+    setStatus("submitting");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          website: typeof honeypot === "string" ? honeypot : "",
+        }),
+      });
+
+      const data: unknown = await res.json().catch(() => null);
+      if (!res.ok) {
+        const message =
+          data &&
+          typeof data === "object" &&
+          "error" in data &&
+          typeof data.error === "string"
+            ? data.error
+            : "Something went wrong. Try again.";
+        setStatus("error");
+        setErrorMessage(message);
+        return;
+      }
+
+      setStatus("submitted");
+      window.dispatchEvent(new Event(WAITLIST_SUCCESS_EVENT));
+    } catch {
+      setStatus("error");
+      setErrorMessage("Something went wrong. Try again.");
+    }
   };
 
   return (
@@ -44,17 +85,23 @@ export function WaitlistShell() {
             type="email"
             autoComplete="email"
             inputMode="email"
-            placeholder="Enter your work email"
+            placeholder="Enter your email"
             name="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={submitted}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              if (status === "error") {
+                setStatus("idle");
+                setErrorMessage("");
+              }
+            }}
+            disabled={submitted || busy}
           />
           <button
             type="submit"
             aria-label="Join the waitlist"
             className={`${styles.submit} ${email.trim() ? styles.active : ""}`}
-            disabled={!email.trim() || submitted}
+            disabled={!email.trim() || submitted || busy}
           >
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className={styles.arrow}>
               <path
@@ -67,18 +114,23 @@ export function WaitlistShell() {
             </svg>
           </button>
         </div>
-        <div
-          className={`${styles.success} ${submitted ? styles.successVisible : ""}`}
-          role="status"
-          aria-live="polite"
-        >
-          <p className={styles.successText}>
-            <span aria-hidden="true" className={styles.check}>
-              ✓{" "}
-            </span>
-            We’ll reach out when Origin is ready for you.
-          </p>
-        </div>
+      </div>
+      {status === "error" && errorMessage ? (
+        <p className={styles.error} role="alert">
+          {errorMessage}
+        </p>
+      ) : null}
+      <div
+        className={`${styles.success} ${submitted ? styles.successVisible : ""}`}
+        role="status"
+        aria-live="polite"
+      >
+        <p className={styles.successText}>
+          <span aria-hidden="true" className={styles.check}>
+            ✓
+          </span>
+          We’ll reach out when After Class is ready for you.
+        </p>
       </div>
     </form>
   );

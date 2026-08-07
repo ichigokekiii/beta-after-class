@@ -12,6 +12,21 @@ import { createRenderLoop } from "@/lib/render-loop";
 
 const TAU = 2 * Math.PI;
 
+/** Secondary dashed stroke — small curve tucked in the lower-left corner. */
+const SECONDARY_DASH = {
+  startDelayMs: 1300,
+  drawMs: 1800,
+  dashSpeed: 9,
+  dash: [5, 7] as [number, number],
+  lineWidth: 1,
+  opacity: 1,
+  segments: 120,
+  // Lower-left: left → bottom, light outward bow, near corner
+  start: { x: -0.02, y: 0.8 },
+  control: { x: 0.1, y: 0.86 },
+  end: { x: 0.2, y: 1.02 },
+};
+
 type Bounds = { minX: number; maxX: number; minY: number; maxY: number };
 
 function computeBounds(cfg: LissajousConfig): Bounds {
@@ -156,6 +171,7 @@ export function OriginLoops({ className }: Props) {
       const solidCap = cfg.segments * cfg.solidFraction;
       ctx.lineWidth = cfg.lineWidth * dpr;
       ctx.strokeStyle = "rgb(255, 255, 255)";
+      ctx.globalAlpha = 1;
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
 
@@ -194,6 +210,43 @@ export function OriginLoops({ className }: Props) {
       }
     };
 
+    const drawSecondaryDash = (
+      progress: number,
+      width: number,
+      height: number,
+      dpr: number,
+      localElapsed: number,
+    ) => {
+      if (progress <= 0) return;
+
+      const s = SECONDARY_DASH;
+      const p0 = { x: s.start.x * width, y: s.start.y * height };
+      const p1 = { x: s.control.x * width, y: s.control.y * height };
+      const p2 = { x: s.end.x * width, y: s.end.y * height };
+      const steps = Math.max(2, Math.floor(s.segments * Math.min(progress, 1)));
+
+      ctx.globalAlpha = s.opacity;
+      ctx.lineWidth = s.lineWidth * dpr;
+      ctx.strokeStyle = "rgb(255, 255, 255)";
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.setLineDash([s.dash[0] * dpr, s.dash[1] * dpr]);
+      ctx.lineDashOffset = -((localElapsed / 1000) * s.dashSpeed * dpr);
+
+      ctx.beginPath();
+      for (let i = 0; i <= steps; i++) {
+        const t = (i / steps) * Math.min(progress, 1);
+        const u = 1 - t;
+        const x = u * u * p0.x + 2 * u * t * p1.x + t * t * p2.x;
+        const y = u * u * p0.y + 2 * u * t * p1.y + t * t * p2.y;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.globalAlpha = 1;
+    };
+
     const loop = createRenderLoop({
       canvas,
       isComplete: () => complete,
@@ -211,6 +264,7 @@ export function OriginLoops({ className }: Props) {
         const solidOnly = variantCfg?.solidOnly ?? false;
         const scale = variantCfg?.scale ?? cfg.scale;
         const anchor = variantCfg?.anchor ?? cfg.anchor;
+        const showSecondary = !solidOnly && variant === "desktop";
 
         const width = canvas.width;
         const height = canvas.height;
@@ -289,11 +343,31 @@ export function OriginLoops({ className }: Props) {
         ctx.clearRect(0, 0, width, height);
         drawCurve(progress * cfg.segments, cx, cy, amp, ox, oy, dpr, dashOffset);
 
-        const doneAt = Math.max(
+        if (showSecondary) {
+          const local = elapsed - SECONDARY_DASH.startDelayMs;
+          const secondaryProgress =
+            reduced || complete
+              ? 1
+              : local <= 0
+                ? 0
+                : easeIntroGlide(Math.min(local / SECONDARY_DASH.drawMs, 1));
+          drawSecondaryDash(
+            secondaryProgress,
+            width,
+            height,
+            dpr,
+            Math.max(0, local),
+          );
+        }
+
+        const primaryDoneAt = Math.max(
           solidOnly ? solidDrawMs : solidDrawMs + dashTotal,
           cfg.intro.expandDelayMs + cfg.intro.expandMs,
         );
-        if (elapsed >= doneAt) complete = true;
+        const secondaryDoneAt = showSecondary
+          ? SECONDARY_DASH.startDelayMs + SECONDARY_DASH.drawMs
+          : 0;
+        if (elapsed >= Math.max(primaryDoneAt, secondaryDoneAt)) complete = true;
       },
     });
 

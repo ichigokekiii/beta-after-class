@@ -1,8 +1,7 @@
 "use client";
 
+import { MapPanBackground } from "@/components/MapPanBackground";
 import { OriginLoops } from "@/components/OriginLoops";
-import { OriginRippleShader } from "@/components/OriginRippleShader";
-import { HERO_BACKGROUND_SRC } from "@/lib/animation-timeline";
 import { useBackgroundRevealed } from "@/lib/use-reveal";
 import styles from "./OriginBackground.module.css";
 
@@ -16,20 +15,21 @@ export function OriginBackground() {
         <div
           className={`${styles.shaderWrap} ${revealed ? styles.shaderVisible : ""}`}
         >
-          <img
-            src={HERO_BACKGROUND_SRC}
-            alt=""
-            aria-hidden="true"
-            className={styles.fallbackImg}
-            decoding="async"
-          />
-          <OriginRippleShader className={styles.canvas} />
+          <MapPanBackground className={styles.mapLayer} />
         </div>
         <div className={styles.dim} />
       </div>
       <div className={styles.loops} aria-hidden="true">
         <OriginLoops className={styles.canvas} />
       </div>
+      <a
+        className={styles.attribution}
+        href="https://www.maptiler.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        © MapTiler © OpenStreetMap
+      </a>
     </>
   );
 }
