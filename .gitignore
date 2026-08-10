@@ -18,6 +18,19 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Local-only (agent skills, pitch, signatures, scratch docs)
+.agents/
+.claude/
+docs/
+email-signature/
+skills-lock.json
+after-class-old-prd.md
+AfterClass_Pitch_Deck.pptx
+AfterClass_Pitch_Deck_Partner_Review.md
+After Class Dark Logo.svg
+Group 176.svg
+/next-env.d.ts
+
 # Supabase CLI cache
 supabase/.temp/
 **/.temp/
