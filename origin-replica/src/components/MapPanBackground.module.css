@@ -1,0 +1,38 @@
+.wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.map {
+  position: absolute;
+  inset: -4%;
+  width: 108%;
+  height: 108%;
+}
+
+.fallback {
+  background: #14120b;
+}
+
+.blur {
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgb(0 0 0 / 0.08);
+  pointer-events: none;
+}
+
+/* Hide any MapLibre chrome if it sneaks in */
+.wrap :global(.maplibregl-ctrl),
+.wrap :global(.maplibregl-canvas-container),
+.wrap :global(.maplibregl-canvas) {
+  outline: none;
+}
+
+.wrap :global(.maplibregl-canvas) {
+  width: 100% !important;
+  height: 100% !important;
+}

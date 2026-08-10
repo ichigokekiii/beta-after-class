@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+reference/frames/
+reference/network-assets/
+reference/dom-snapshot.json
+reference/computed-styles.json
+reference/page-structure.json
+*.log
+.DS_Store
+.env*

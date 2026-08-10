@@ -1,0 +1,27 @@
+{
+  "title": "Cursor · Origin",
+  "canvases": [
+    {
+      "w": 1440,
+      "h": 900,
+      "className": "OriginBackground_canvas__bS4h0"
+    },
+    {
+      "w": 1440,
+      "h": 900,
+      "className": "OriginBackground_canvas__bS4h0"
+    }
+  ],
+  "h1": {
+    "text": "A git forge for the agentic era",
+    "size": "52px",
+    "color": "rgb(237, 236, 236)",
+    "rect": {
+      "x": 378,
+      "y": 120,
+      "w": 589.21875,
+      "h": 52
+    }
+  },
+  "bodyBg": "rgb(20, 18, 11)"
+}

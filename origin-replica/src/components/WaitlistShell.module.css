@@ -1,0 +1,152 @@
+.form {
+  width: 100%;
+  margin-top: 0.5rem;
+  text-align: left;
+  position: relative;
+}
+
+.labelWrap {
+  position: relative;
+  margin-bottom: 0.4667rem;
+}
+
+.label {
+  display: block;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #EDECEC;
+  transform: translateY(0);
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
+  transition-delay: 200ms;
+}
+
+.hidden {
+  pointer-events: none;
+  user-select: none;
+  transform: translateY(2px);
+  opacity: 0;
+  transition-delay: 0ms;
+}
+
+.field {
+  position: relative;
+  overflow: hidden;
+  height: 3rem;
+  border-radius: 0.5rem;
+}
+
+.inputLayer {
+  position: absolute;
+  inset: 0;
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
+}
+
+.submitted {
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px);
+}
+
+.input {
+  width: 100%;
+  height: 3rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #171717;
+  caret-color: #171717;
+  padding: 0.56em 3.5rem 0.58em 1.25rem;
+  font-size: 16px;
+  outline: none;
+}
+
+.input::placeholder {
+  color: #737373;
+  opacity: 1;
+}
+
+.submit {
+  position: absolute;
+  top: 50%;
+  right: 0.25rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #14120b;
+  opacity: 0.4;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity 200ms ease-out;
+}
+
+.active {
+  opacity: 1;
+  pointer-events: auto;
+  cursor: pointer;
+  background: #14120b;
+  color: #EDECEC;
+}
+
+.arrow {
+  width: 1rem;
+  height: 1rem;
+}
+
+.success {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  border-radius: 0.5rem;
+  background: #14120b;
+  padding: 1.5rem;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px);
+  transition:
+    opacity 200ms ease-out,
+    transform 200ms ease-out;
+}
+
+.successVisible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 60ms;
+}
+
+.successText {
+  margin: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #EDECEC;
+  text-wrap: balance;
+}
+
+.check {
+  user-select: none;
+  padding-left: 0.5rem;
+}
+
+.error {
+  margin: 0.5rem 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #f5c6c6;
+}

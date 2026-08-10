@@ -1,0 +1,88 @@
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.solid {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background: #14120b;
+}
+
+.shaderWrap {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  transform-origin: top right;
+  transform: scale(1);
+  opacity: 0;
+  transition: opacity 700ms ease-out;
+}
+
+.shaderVisible {
+  opacity: 1;
+}
+
+@media (max-width: 1023px) {
+  .shaderWrap {
+    transform-origin: bottom right;
+    transform: scale(1.25);
+  }
+}
+
+.dim {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  background: rgb(0 0 0 / 0.28);
+}
+
+@media (min-width: 1024px) {
+  .dim {
+    background: rgb(0 0 0 / 0.32);
+  }
+}
+
+.loops {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mapLayer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.attribution {
+  position: fixed;
+  right: 0.75rem;
+  bottom: 0.5rem;
+  z-index: 5;
+  font-size: 10px;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  color: rgb(237 236 236 / 0.45);
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.attribution:hover {
+  color: rgb(237 236 236 / 0.75);
+}
