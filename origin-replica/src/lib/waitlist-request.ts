@@ -1,9 +1,11 @@
 type WaitlistFields = {
   email: unknown;
   website: unknown;
+  turnstileToken: unknown;
 };
 
-const MAX_BODY_BYTES = 2_048;
+/** Enough room for email + Turnstile token (tokens are often ~1–2KB). */
+const MAX_BODY_BYTES = 8_192;
 
 export function parseWaitlistBody(value: unknown): WaitlistFields | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -11,6 +13,7 @@ export function parseWaitlistBody(value: unknown): WaitlistFields | null {
   return {
     email: record.email,
     website: record.website,
+    turnstileToken: record.turnstileToken,
   };
 }
 
@@ -19,20 +22,6 @@ export function isBodyTooLarge(request: Request): boolean {
   if (!raw) return false;
   const size = Number(raw);
   return Number.isFinite(size) && size > MAX_BODY_BYTES;
-}
-
-const hitsByIp = new Map<string, number[]>();
-
-export function allowWaitlistAttempt(ip: string, limit = 8, windowMs = 60_000): boolean {
-  const now = Date.now();
-  const recent = (hitsByIp.get(ip) ?? []).filter((t) => now - t < windowMs);
-  if (recent.length >= limit) {
-    hitsByIp.set(ip, recent);
-    return false;
-  }
-  recent.push(now);
-  hitsByIp.set(ip, recent);
-  return true;
 }
 
 export function clientIp(request: Request): string {

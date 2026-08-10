@@ -1,0 +1,30 @@
+# Secrets — never commit
+.env
+.env.*
+!.env.example
+
+# Dependencies & build
+node_modules/
+.next/
+out/
+dist/
+.vercel/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Supabase CLI cache
+supabase/.temp/
+**/.temp/
+
+# TS incremental
+*.tsbuildinfo
+
+# Test / capture artifacts
+coverage/
+*.log

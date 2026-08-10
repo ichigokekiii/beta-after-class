@@ -1,5 +1,5 @@
--- Waitlist table hardening notes (run in Supabase SQL Editor if recreating)
--- Insert-only for anon. No select/update/delete policies for public roles.
+-- Waitlist schema (origin-replica). Apply via supabase/migrations/ in order.
+-- Inserts only via service role from the Next.js API. No anon write path.
 
 create table if not exists public.waitlist (
   id uuid primary key default gen_random_uuid(),
@@ -15,11 +15,15 @@ alter table public.waitlist enable row level security;
 
 drop policy if exists "Anyone can join waitlist" on public.waitlist;
 
-create policy "Anyone can join waitlist"
-  on public.waitlist
-  for insert
-  to anon, authenticated
-  with check (true);
+revoke insert on public.waitlist from anon, authenticated;
+revoke select, update, delete on public.waitlist from anon, authenticated;
 
--- Explicitly deny reads/mutations from anon via missing policies.
--- Service role / dashboard still has full access.
+-- Rate limits (HMAC of IP only). See migration 20260810130000_waitlist_rate_limits.sql.
+create table if not exists public.waitlist_rate_limits (
+  ip_hash text primary key,
+  attempt_count integer not null default 0,
+  window_start timestamptz not null default now()
+);
+
+alter table public.waitlist_rate_limits enable row level security;
+revoke all on public.waitlist_rate_limits from anon, authenticated;
