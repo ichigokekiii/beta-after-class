@@ -1,5 +1,0 @@
-# Minimal Supabase CLI config for remote migrations (origin-replica waitlist).
-project_id = "xolzwrwdnxlqzmncpnsz"
-
-[db]
-major_version = 15

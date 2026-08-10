@@ -31,8 +31,8 @@ After Class Dark Logo.svg
 Group 176.svg
 /next-env.d.ts
 
-# Supabase CLI cache
-supabase/.temp/
+# Local Supabase CLI / already-applied migrations
+/supabase/
 **/.temp/
 
 # TS incremental
