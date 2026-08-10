@@ -150,3 +150,8 @@
   line-height: 1.4;
   color: #f5c6c6;
 }
+
+.turnstile {
+  margin-top: 0.75rem;
+  min-height: 65px;
+}

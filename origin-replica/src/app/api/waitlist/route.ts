@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { parseEmail } from "@/lib/email";
 import { notifyWaitlistSignup } from "@/lib/notify-waitlist";
+import { consumeWaitlistRateLimit } from "@/lib/rate-limit";
 import { getSupabase } from "@/lib/supabase";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import {
-  allowWaitlistAttempt,
   clientIp,
   isBodyTooLarge,
   parseWaitlistBody,
@@ -15,9 +16,6 @@ export async function POST(request: Request) {
   }
 
   const ip = clientIp(request);
-  if (!allowWaitlistAttempt(ip)) {
-    return NextResponse.json({ error: "Too many attempts. Try again soon." }, { status: 429 });
-  }
 
   let raw: unknown;
   try {
@@ -36,6 +34,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  const turnstileOk = await verifyTurnstileToken(body.turnstileToken, ip);
+  if (!turnstileOk) {
+    return NextResponse.json(
+      { error: "Verification failed. Refresh and try again." },
+      { status: 400 },
+    );
+  }
+
+  const allowed = await consumeWaitlistRateLimit(ip);
+  if (!allowed) {
+    return NextResponse.json(
+      { error: "Too many attempts. Try again soon." },
+      { status: 429 },
+    );
+  }
+
   const email = parseEmail(body.email);
   if (!email) {
     return NextResponse.json({ error: "Enter a valid email" }, { status: 400 });
@@ -45,9 +59,9 @@ export async function POST(request: Request) {
   const { error } = await supabase.from("waitlist").insert({ email });
 
   if (error) {
-    // Already signed up — treat as success so the UI stays clean
+    // Already signed up — identical success shape (no enumeration)
     if (error.code === "23505") {
-      return NextResponse.json({ ok: true, alreadyJoined: true });
+      return NextResponse.json({ ok: true });
     }
 
     console.error("waitlist insert failed", {

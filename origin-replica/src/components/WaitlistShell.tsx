@@ -1,23 +1,39 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useCallback, useRef, useState } from "react";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 import { WAITLIST_SUCCESS_EVENT } from "@/lib/animation-timeline";
 import { keepFieldInView } from "@/lib/use-mobile-keyboard";
 import styles from "./WaitlistShell.module.css";
 
 type FormStatus = "idle" | "submitting" | "submitted" | "error";
 
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
+
 export function WaitlistShell() {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance | null>(null);
 
   const submitted = status === "submitted";
   const busy = status === "submitting";
+  const canSubmit =
+    Boolean(email.trim()) &&
+    Boolean(turnstileToken) &&
+    Boolean(TURNSTILE_SITE_KEY) &&
+    !busy &&
+    !submitted;
+
+  const resetTurnstile = useCallback(() => {
+    setTurnstileToken("");
+    turnstileRef.current?.reset();
+  }, []);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!email.trim() || busy || submitted) return;
+    if (!canSubmit) return;
 
     const form = e.currentTarget;
     const honeypot = new FormData(form).get("website");
@@ -32,6 +48,7 @@ export function WaitlistShell() {
         body: JSON.stringify({
           email: email.trim(),
           website: typeof honeypot === "string" ? honeypot : "",
+          turnstileToken,
         }),
       });
 
@@ -46,6 +63,7 @@ export function WaitlistShell() {
             : "Something went wrong. Try again.";
         setStatus("error");
         setErrorMessage(message);
+        resetTurnstile();
         return;
       }
 
@@ -54,6 +72,7 @@ export function WaitlistShell() {
     } catch {
       setStatus("error");
       setErrorMessage("Something went wrong. Try again.");
+      resetTurnstile();
     }
   };
 
@@ -106,8 +125,8 @@ export function WaitlistShell() {
           <button
             type="submit"
             aria-label="Join the waitlist"
-            className={`${styles.submit} ${email.trim() ? styles.active : ""}`}
-            disabled={!email.trim() || submitted || busy}
+            className={`${styles.submit} ${canSubmit ? styles.active : ""}`}
+            disabled={!canSubmit}
           >
             <svg viewBox="0 0 16 16" fill="none" aria-hidden="true" className={styles.arrow}>
               <path
@@ -121,6 +140,23 @@ export function WaitlistShell() {
           </button>
         </div>
       </div>
+      {!submitted && TURNSTILE_SITE_KEY ? (
+        <div className={styles.turnstile}>
+          <Turnstile
+            ref={turnstileRef}
+            siteKey={TURNSTILE_SITE_KEY}
+            options={{ theme: "dark", size: "flexible" }}
+            onSuccess={(token) => setTurnstileToken(token)}
+            onExpire={resetTurnstile}
+            onError={resetTurnstile}
+          />
+        </div>
+      ) : null}
+      {!TURNSTILE_SITE_KEY && !submitted ? (
+        <p className={styles.error} role="alert">
+          Bot protection is not configured.
+        </p>
+      ) : null}
       {status === "error" && errorMessage ? (
         <p className={styles.error} role="alert">
           {errorMessage}
