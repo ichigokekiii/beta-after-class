@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "command": ".cursor/hooks/pin-grok-46-high.py",
+        "matcher": "Task|Write|StrReplace",
+        "failClosed": true
+      }
+    ],
+    "subagentStart": [
+      {
+        "command": ".cursor/hooks/pin-grok-46-high.py",
+        "failClosed": true
+      }
+    ]
+  }
+}

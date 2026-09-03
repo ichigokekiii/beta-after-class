@@ -1,0 +1,23 @@
+---
+description: Pin every custom subagent and Task launch to Cursor Grok 4.6 High. No other model.
+alwaysApply: true
+---
+
+# Subagent model: Cursor Grok 4.6 High only
+
+Custom subagents and Task launches in this repo use **Cursor Grok 4.6 High** and nothing else.
+
+## Required values
+
+- Agent file frontmatter: `model: cursor-grok-4.6-high`
+- Every Task call: `model: "cursor-grok-4.6-high"`
+
+## Forbidden
+
+Do not use `inherit`, `auto`, `fast`, Composer, Claude, GPT, Gemini, Grok 4.5, or any other id. Do not omit `model` on Task or in agent frontmatter. Omission defaults to `inherit`, which is a violation.
+
+`/create-subagent` follows `.agents/skills/create-subagent/SKILL.md` (and the user-level copy). It must write `model: cursor-grok-4.6-high` into every new agent file under `.cursor/agents/`.
+
+If a new agent type is not yet in the Task enum, still pass `model: "cursor-grok-4.6-high"`. Do not fall back to another family.
+
+A fail-closed hook at `.cursor/hooks/pin-grok-46-high.py` denies any Task, subagent start, or `.cursor/agents/*.md` write that is not pinned to `cursor-grok-4.6-high`.
