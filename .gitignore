@@ -17,6 +17,7 @@ Thumbs.db
 *.swo
 .idea/
 .vscode/
+.cursor/
 
 # Local-only (agent skills, pitch, signatures, scratch docs)
 .agents/
@@ -41,3 +42,4 @@ Group 176.svg
 # Test / capture artifacts
 coverage/
 *.log
+pitch-deck/After Class Pitch Deck.pdf
