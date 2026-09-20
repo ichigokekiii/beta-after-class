@@ -39,6 +39,20 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  async redirects() {
+    return [
+      {
+        source: "/pilot",
+        destination: "https://afterclass-website-omega.vercel.app/",
+        permanent: false,
+      },
+      {
+        source: "/pilot/:path*",
+        destination: "https://afterclass-website-omega.vercel.app/:path*",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
