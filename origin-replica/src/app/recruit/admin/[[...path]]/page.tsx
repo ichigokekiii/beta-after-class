@@ -26,10 +26,8 @@ export default async function RecruitAdminPage({
   params,
   searchParams,
 }: {
-  params: Promise<{ path?: string[] }> | { path?: string[] };
-  searchParams:
-    | Promise<Record<string, string | string[] | undefined>>
-    | Record<string, string | string[] | undefined>;
+  params: Promise<{ path?: string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { path } = await params;
   const query = await searchParams;
